@@ -1,5 +1,5 @@
 NAME := librato-exporter
-VERSION := 0.1.0
+VERSION := 0.1.2
 RELEASE := 1
 REGISTRY := kandeshvari
 

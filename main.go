@@ -12,6 +12,7 @@ func main() {
 		Info("starting librato-exporter")
 
 	go goRequestMetricsLoop()
+	go goMetricsGC()
 
 	runServer()
 }

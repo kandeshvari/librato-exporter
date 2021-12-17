@@ -75,6 +75,23 @@ func goRequestMetricsLoop() {
 	}
 }
 
+// Retrieve metric mensurements
+func goMetricsGC() {
+	for {
+		time.Sleep(time.Minute * 1)
+
+		curTm := uint(time.Now().Unix())
+		lock.Lock()
+		for k := range metricsHolder {
+			if metricsGCPeriod > 0 && metricsHolder[k].Time+uint(metricsGCPeriod) < curTm {
+				delete(metricsHolder, k)
+				log.WithField("metric", k).Warn("metric was garbage collected")
+			}
+		}
+		lock.Unlock()
+	}
+}
+
 func doRequest(req *fasthttp.Request) ([]byte, error) {
 	triesCount := int64(0)
 DO_RETRY:
@@ -103,7 +120,7 @@ func basicAuth(username, password string) string {
 }
 
 func makeRequest(metric string, startTime, stopTime, resolution int64) *fasthttp.Request {
-	url := fmt.Sprintf("%s%s?start_time=%d&end_time=%d&resolution=%d", urlLibratoMeasurements, metric, startTime, stopTime, resolution)
+	url := fmt.Sprintf("%s%s?start_time=%d&end_time=%d&resolution=%d&max_series=200", urlLibratoMeasurements, metric, startTime, stopTime, resolution)
 	if metricsSummaryFunc != "" {
 		url = fmt.Sprintf("%s&summary_function=%s", url, metricsSummaryFunc)
 	}
