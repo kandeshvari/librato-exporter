@@ -1,7 +1,7 @@
 NAME := librato-exporter
 VERSION := 0.1.2
 RELEASE := 1
-REGISTRY := kandeshvari
+REGISTRY := quay.io/workato
 
 IMAGE := $(REGISTRY)/$(NAME)
 
